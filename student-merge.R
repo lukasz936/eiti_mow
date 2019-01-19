@@ -76,35 +76,35 @@ ggplot2::ggsave(paste("kmeans", "ours", "centers", ".png", sep="_"))
 #dbscan
 
 install.packages("dbscan")
-db_clusters1 = dbscan::dbscan(data_for_clustering, eps=1, minPts =5)
+dbscan_algorithm_results1 = dbscan::dbscan(data_for_clustering, eps=1, minPts =5)
 
 plot(
   data_for_clustering[, 1],
   data_for_clustering[, 2],
   pch = 20,
-  col = db_clusters1$cluster,
+  col = dbscan_algorithm_results1$cluster,
   main = "Grupowanie DBSCAN\neps=1, minPts= 5",
   xlab = "Dalc",
   ylab = "Walc"
 )
 
-db_clusters2 = dbscan::dbscan(data_for_clustering, eps=0.1, minPts = 5)
+dbscan_algorithm_results2 = dbscan::dbscan(data_for_clustering, eps=0.1, minPts = 5)
 plot(
   data_for_clustering[, 1],
   data_for_clustering[, 2],
   pch = 20,
-  col = db_clusters2$cluster,
+  col = dbscan_algorithm_results2$cluster,
   main = "Grupowanie DBSCAN\neps=0.1, minPts= 5",
   xlab = "Dalc",
   ylab = "Walc"
 )
 
-db_clusters3 = dbscan::dbscan(data_for_clustering, eps=0.1, minPts = 1)
+dbscan_algorithm_results3 = dbscan::dbscan(data_for_clustering, eps=0.1, minPts = 1)
 plot(
   data_for_clustering[, 1],
   data_for_clustering[, 2],
   pch = 20,
-  col = db_clusters3$cluster,
+  col = dbscan_algorithm_results3$cluster,
   main = "Grupowanie DBSCAN\neps=0.1, minPts= 1",
   xlab = "Dalc",
   ylab = "Walc"
@@ -113,19 +113,56 @@ plot(
 install.packages("factoextra")
 install.packages("cluster")
 library(cluster)
-grupy <- agnes(data_for_clustering, method = "average")
 
-data=cutree(grupy, k = 2)
-library(factoextra)
-fviz_dend(grupy, k = 2, rect = TRUE, main = "Metoda Ward")
+agnes_algorithm_results1 <- agnes(data_for_clustering, method = "ward")
+agnes_groups1=cutree(agnes_algorithm_results1, k = 2)
 
-
-
-ggplot2::ggplot(data = data_for_clustering, mapping = ggplot2::aes(x = data_for_clustering$Dalc, y = data_for_clustering$Walc, color = factor(data))) + 
+ggplot2::ggplot(data = data_for_clustering, mapping = ggplot2::aes(x = data_for_clustering$Dalc, y = data_for_clustering$Walc, color = factor(agnes_groups1))) + 
   ggplot2::scale_color_manual( values = c("green", "red")) + ggplot2::labs(color="grupa") +
   ggplot2::geom_count() +
   ggplot2::labs( 
     y = "Walc - weekendowe spożycie alkoholu", 
     x = "Dalc - spożycie alkoholu w dni pracujące", 
-    title = "Grupowanie hierarchiczne - agnes")
-ggplot2::ggsave(paste("agnes", ".png", sep="_"))
+    title = "Grupowanie hierarchiczne\nAgnes - metoda Ward")
+ggplot2::ggsave(paste("agnes_ward", ".png", sep="_"))
+
+
+agnes_algorithm_results2 <- agnes(data_for_clustering, method = "complete")
+agnes_groups2=cutree(agnes_algorithm_results2, k = 2)
+
+ggplot2::ggplot(data = data_for_clustering, mapping = ggplot2::aes(x = data_for_clustering$Dalc, y = data_for_clustering$Walc, color = factor(agnes_groups2))) + 
+  ggplot2::scale_color_manual( values = c("green", "red")) + ggplot2::labs(color="grupa") +
+  ggplot2::geom_count() +
+  ggplot2::labs( 
+    y = "Walc - weekendowe spożycie alkoholu", 
+    x = "Dalc - spożycie alkoholu w dni pracujące", 
+    title = "Grupowanie hierarchiczne\nAgnes - metoda complete")
+ggplot2::ggsave(paste("agnes_complete", ".png", sep="_"))
+
+
+agnes_algorithm_results3 <- agnes(data_for_clustering, method = "single")
+agnes_groups3=cutree(agnes_algorithm_results3, k = 2)
+
+ggplot2::ggplot(data = data_for_clustering, mapping = ggplot2::aes(x = data_for_clustering$Dalc, y = data_for_clustering$Walc, color = factor(agnes_groups3))) + 
+  ggplot2::scale_color_manual( values = c("green", "red")) + ggplot2::labs(color="grupa") +
+  ggplot2::geom_count() +
+  ggplot2::labs( 
+    y = "Walc - weekendowe spożycie alkoholu", 
+    x = "Dalc - spożycie alkoholu w dni pracujące", 
+    title = "Grupowanie hierarchiczne\nAgnes - metoda single")
+ggplot2::ggsave(paste("agnes_single", ".png", sep="_"))
+
+
+
+agnes_algorithm_results4 <- agnes(data_for_clustering, method = "average")
+agnes_groups4=cutree(agnes_algorithm_results4, k = 2)
+
+ggplot2::ggplot(data = data_for_clustering, mapping = ggplot2::aes(x = data_for_clustering$Dalc, y = data_for_clustering$Walc, color = factor(agnes_groups4))) + 
+  ggplot2::scale_color_manual( values = c("green", "red")) + ggplot2::labs(color="grupa") +
+  ggplot2::geom_count() +
+  ggplot2::labs( 
+    y = "Walc - weekendowe spożycie alkoholu", 
+    x = "Dalc - spożycie alkoholu w dni pracujące", 
+    title = "Grupowanie hierarchiczne\nAgnes - metoda average")
+ggplot2::ggsave(paste("agnes_average", ".png", sep="_"))
+
